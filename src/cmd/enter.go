@@ -30,6 +30,7 @@ var (
 		container string
 		distro    string
 		release   string
+		once      bool
 	}
 )
 
@@ -61,6 +62,12 @@ func init() {
 		"",
 		"Enter a Toolbx container for a different operating system release than the host")
 
+	flags.BoolVarP(&enterFlags.once,
+		"once",
+		"o",
+		false,
+		"Do not track container in use, only enter the container once.")
+
 	if err := enterCmd.RegisterFlagCompletionFunc("container", completionContainerNames); err != nil {
 		panicMsg := fmt.Sprintf("failed to register flag completion function: %v", err)
 		panic(panicMsg)
@@ -87,6 +94,7 @@ func enter(cmd *cobra.Command, args []string) error {
 	var container string
 	var containerArg string
 	var defaultContainer bool = true
+	var emitEscapeSequence bool = !enterFlags.once
 
 	if len(args) != 0 {
 		container = args[0]
@@ -121,7 +129,7 @@ func enter(cmd *cobra.Command, args []string) error {
 
 	command := []string{userShell, "-l"}
 
-	if err := runCommand(container, defaultContainer, image, release, 0, command, true, true, false); err != nil {
+	if err := runCommand(container, defaultContainer, image, release, 0, command, emitEscapeSequence, true, false); err != nil {
 		return err
 	}
 
