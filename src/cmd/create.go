@@ -371,6 +371,21 @@ func createContainer(container, image, release, authFile string, showCommandToEn
 		}
 	}
 
+	var optLink []string
+	var optMount []string
+
+	if utils.PathExists("/opt") {
+		logrus.Debug("Checking if /opt is a symbolic link to /var/opt")
+
+		optPath, _ := filepath.EvalSymlinks("/opt")
+		if optPath == "/var/opt" {
+			logrus.Debug("/opt is a symbolic link to /var/opt")
+			optLink = []string{"--opt-link"}
+		} else {
+			optMount = []string{"--volume", "/opt:/opt:rslave"}
+		}
+	}
+
 	var runMediaMount []string
 
 	if utils.PathExists("/run/media") {
@@ -421,6 +436,7 @@ func createContainer(container, image, release, authFile string, showCommandToEn
 	entryPoint = append(entryPoint, slashHomeLink...)
 	entryPoint = append(entryPoint, mediaLink...)
 	entryPoint = append(entryPoint, mntLink...)
+	entryPoint = append(entryPoint, optLink...)
 
 	createArgs := []string{
 		"--log-level", logLevelString,
@@ -469,6 +485,7 @@ func createContainer(container, image, release, authFile string, showCommandToEn
 	createArgs = append(createArgs, mediaMount...)
 	createArgs = append(createArgs, mntMount...)
 	createArgs = append(createArgs, pcscSocketMount...)
+	createArgs = append(createArgs, optMount...)
 	createArgs = append(createArgs, runMediaMount...)
 	createArgs = append(createArgs, toolboxShMount...)
 

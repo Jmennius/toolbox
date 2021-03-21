@@ -45,6 +45,7 @@ var (
 		homeLink    bool
 		mediaLink   bool
 		mntLink     bool
+		optLink     bool
 		monitorHost bool
 		shell       string
 		uid         int
@@ -71,6 +72,7 @@ var (
 		{"/var/lib/systemd/coredump", "/run/host/var/lib/systemd/coredump", ""},
 		{"/var/log/journal", "/run/host/var/log/journal", ""},
 		{"/var/mnt", "/run/host/var/mnt", "rslave"},
+		{"/var/opt", "/run/host/var/opt", "rslave"},
 	}
 )
 
@@ -108,6 +110,8 @@ func init() {
 		"Make /media a symbolic link to /run/media")
 
 	flags.BoolVar(&initContainerFlags.mntLink, "mnt-link", false, "Make /mnt a symbolic link to /var/mnt")
+
+	flags.BoolVar(&initContainerFlags.optLink, "opt-link", false, "Make /opt a symbolic link to /var/opt")
 
 	flags.BoolVar(&initContainerFlags.monitorHost,
 		"monitor-host",
@@ -242,6 +246,14 @@ func initContainer(cmd *cobra.Command, args []string) error {
 	if initContainerFlags.mntLink {
 		if _, err := os.Readlink("/mnt"); err != nil {
 			if err := redirectPath("/mnt", "/var/mnt", true); err != nil {
+				return err
+			}
+		}
+	}
+
+	if initContainerFlags.optLink {
+		if _, err := os.Readlink("/opt"); err != nil {
+			if err := redirectPath("/opt", "/var/opt", true); err != nil {
 				return err
 			}
 		}
