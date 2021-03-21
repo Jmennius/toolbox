@@ -51,7 +51,11 @@ func TestGetReleaseFormat(t *testing.T) {
 }
 
 func TestGetSupportedDistros(t *testing.T) {
-	refDistros := []string{"fedora", "rhel"}
+	refDistros := []string{
+		"fedora",
+		"rhel",
+		"ubuntu",
+	}
 
 	distros := GetSupportedDistros()
 	for _, d := range distros {
@@ -173,6 +177,13 @@ func TestResolveDistro(t *testing.T) {
 			false,
 		},
 		{
+			"Ubuntu",
+			"ubuntu",
+			"ubuntu",
+			"",
+			false,
+		},
+		{
 			"FooBar; wrong distro",
 			"foobar",
 			"",
@@ -268,6 +279,20 @@ func TestParseRelease(t *testing.T) {
 			inputRelease: "-2.1",
 			ok:           false,
 			errMsg:       "release must be a positive number",
+		},
+		{
+			name:         "Ubuntu; 20.04; valid",
+			inputDistro:  "ubuntu",
+			inputRelease: "20.04",
+			output:       "20.04",
+			ok:           true,
+		},
+		{
+			name:         "Ubuntu; 20; invalid; missing dot",
+			inputDistro:  "ubuntu",
+			inputRelease: "20",
+			ok:           false,
+			errMsg:       "release must contain a single dot",
 		},
 	}
 
