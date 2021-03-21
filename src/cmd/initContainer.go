@@ -73,6 +73,7 @@ var (
 		{"/var/log/journal", "/run/host/var/log/journal", ""},
 		{"/var/mnt", "/run/host/var/mnt", "rslave"},
 		{"/var/opt", "/run/host/var/opt", "rslave"},
+		{"/tmp/.X11-unix", "/run/host/tmp/.X11-unix", ""},
 	}
 )
 
