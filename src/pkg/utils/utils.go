@@ -122,7 +122,7 @@ var (
 			"ubuntu-toolbox",
 			parseReleaseUbuntu,
 			"<yeah.month>",
-			"docker.io",
+			"quay.io",
 			"jmennius",
 			false,
 		},
